@@ -472,6 +472,7 @@ impl State {
     }
 }
 
+
 /// Static information about miner
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
@@ -487,9 +488,12 @@ pub struct MinerInfo {
     pub worker_change_epoch: ChainEpoch,
     #[serde(with = "peer_id_json")]
     pub peer_id: Option<PeerId>,
+    #[serde(with = "go_vec_visitor")]
     pub multiaddrs: Vec<BytesDe>,
+    #[serde(rename = "WindowPoStProofType")]
     pub window_post_proof_type: RegisteredPoStProof,
     pub sector_size: SectorSize,
+    #[serde(rename = "WindowPoStPartitionSectors")]
     pub window_post_partition_sectors: u64,
     pub consensus_fault_elapsed: ChainEpoch,
 }
