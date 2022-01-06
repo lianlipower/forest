@@ -148,9 +148,9 @@ struct PersistentKeyStore {
 /// XSalsa20Poly1305 authenticated encryption
 /// CBOR encoding
 #[derive(Clone, PartialEq, Debug, Eq)]
-struct EncryptedKeyStore {
-    salt: pwhash::Salt,
-    encryption_key: Arc<secretbox::Key>,
+pub struct EncryptedKeyStore {
+    pub salt: pwhash::Salt,
+    pub encryption_key: Arc<secretbox::Key>,
 }
 
 #[derive(Debug, Error)]
@@ -416,7 +416,7 @@ impl KeyStore {
 }
 
 impl EncryptedKeyStore {
-    fn derive_key(
+    pub fn derive_key(
         passphrase: &str,
         prev_salt: Option<Vec<u8>>,
     ) -> Result<(pwhash::Salt, Arc<secretbox::Key>), EncryptedKeyStoreError> {
@@ -442,7 +442,7 @@ impl EncryptedKeyStore {
         Ok((salt, Arc::new(key)))
     }
 
-    fn encrypt(encryption_key: Arc<secretbox::Key>, msg: &[u8]) -> Vec<u8> {
+    pub fn encrypt(encryption_key: Arc<secretbox::Key>, msg: &[u8]) -> Vec<u8> {
         let nonce = secretbox::gen_nonce();
 
         let mut ciphertext = secretbox::seal(msg, &nonce, &encryption_key);
@@ -450,7 +450,7 @@ impl EncryptedKeyStore {
         ciphertext
     }
 
-    fn decrypt(
+    pub fn decrypt(
         encryption_key: Arc<secretbox::Key>,
         msg: &[u8],
     ) -> Result<Vec<u8>, EncryptedKeyStoreError> {
