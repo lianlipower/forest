@@ -26,7 +26,7 @@ rand = "0.7.3"
 rand_chacha = "0.2.2"
 
 [features]
-default = ["blst"]
+default = ["pairing"]
 json = ["base64"]
-blst = ["bls-signatures/blst"]
+blst = ["bls-signatures/pairing"]
 pairing = ["bls-signatures/pairing"]

@@ -16,11 +16,11 @@ chain = { path = "../../blockchain/chain", features = ["json"] }
 chain_sync = { path = "../../blockchain/chain_sync" }
 cid = { package = "forest_cid", version = "0.3", features = ["json"] }
 clock = { package = "fil_clock", path = "../clock" }
-crypto = { package = "forest_crypto", version = "0.5", features = ["json", "blst"] }
+crypto = { package = "forest_crypto", version = "0.5", features = ["json", "pairing"] }
 fil_types = "0.2"
 forest_libp2p = { path = "../forest_libp2p" }
 ipld = { package = "forest_ipld", path = "../../ipld", features = ["json"] }
-message = { package = "forest_message", version = "0.7", features = ["json", "blst"] }
+message = { package = "forest_message", version = "0.7", features = ["json", "pairing"] }
 message_pool = { path = "../../blockchain/message_pool" }
 num-bigint = { path = "../../utils/bigint", package = "forest_bigint", version = "0.1.1" }
 state_manager = { package = "state_manager", path = "../../blockchain/state_manager" }

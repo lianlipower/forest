@@ -19,7 +19,6 @@ pub use self::mainnet::*;
 mod mainnet;
 #[cfg(feature = "conformace")]
 pub use self::mainnet::*;
-pub use crate::mainnet::*;
 
 #[cfg(all(
     feature = "interopnet",
