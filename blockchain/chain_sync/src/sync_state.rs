@@ -4,25 +4,29 @@
 use blocks::{tipset::tipset_json::TipsetJsonRef, Tipset};
 use chrono::{DateTime, Duration, Utc};
 use clock::ChainEpoch;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use encoding::repr::*;
+use serde::{Deserialize, Serialize, Serializer};
 use std::fmt;
 use std::sync::Arc;
 
 /// Current state of the ChainSyncer using the ChainExchange protocol.
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
 pub enum SyncStage {
     /// Idle state.
-    Idle,
+    Idle = 0,
     /// Syncing headers from the heaviest tipset to genesis.
-    Headers,
+    Headers = 1,
     /// Persisting headers on chain from heaviest to genesis.
-    PersistHeaders,
+    PersistHeaders = 2,
     /// Syncing messages and performing state transitions.
-    Messages,
+    Messages = 3,
     /// ChainSync completed and is following chain.
-    Complete,
+    Complete = 4,
     /// Error has occured while syncing.
-    Error,
+    Error = 5,
+    /// Fetching message.
+    FetchingMessages = 6,
 }
 
 impl Default for SyncStage {
@@ -40,36 +44,8 @@ impl fmt::Display for SyncStage {
             SyncStage::Messages => write!(f, "message sync"),
             SyncStage::Complete => write!(f, "complete"),
             SyncStage::Error => write!(f, "error"),
+            SyncStage::FetchingMessages => write!(f, "fetching messages"),
         }
-    }
-}
-
-impl Serialize for SyncStage {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        self.to_string().serialize(serializer)
-    }
-}
-
-impl<'de> Deserialize<'de> for SyncStage {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let stage: &str = Deserialize::deserialize(deserializer)?;
-
-        let output = match stage {
-            "idle worker" => SyncStage::Idle,
-            "header sync" => SyncStage::Headers,
-            "persisting headers" => SyncStage::PersistHeaders,
-            "message synce" => SyncStage::Messages,
-            "complete" => SyncStage::Complete,
-            _ => SyncStage::Error,
-        };
-
-        Ok(output)
     }
 }
 
@@ -163,6 +139,7 @@ impl Serialize for SyncState {
             target: Option<TipsetJsonRef<'a>>,
 
             stage: SyncStage,
+            #[serde(rename = "Height")]
             epoch: ChainEpoch,
 
             start: &'a Option<DateTime<Utc>>,
@@ -198,6 +175,7 @@ impl<'de> Deserialize<'de> for SyncState {
 
             #[serde(with = "super::SyncStage")]
             stage: SyncStage,
+            #[serde(rename = "Height")]
             epoch: ChainEpoch,
 
             start: Option<DateTime<Utc>>,
